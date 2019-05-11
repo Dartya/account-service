@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sbrf.study.service.dto.AccountManagement;
 import ru.sbrf.study.service.dto.Record;
 
 import javax.sql.DataSource;
@@ -60,6 +61,22 @@ public class DataAccess implements InitializingBean {
                 logger.info("db connection checked successfully");
             else
                 throw new RuntimeException("db connection error");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Создает новую запись в таблице счетов
+     * @param accountManagement dto
+     */
+    public void createAccount(AccountManagement accountManagement) {
+        try (final Connection connection = dataSource.getConnection()) {
+            final PreparedStatement statement = connection.prepareStatement("insert into account (client_id, summ, currency) values (?, ?, ?)");
+            statement.setInt(1, (accountManagement.getClient_id()));
+            statement.setBigDecimal(2, accountManagement.getSumm());
+            statement.setString(3, accountManagement.getCurrency());
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
