@@ -81,4 +81,40 @@ public class DataAccess implements InitializingBean {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Удаляет запись из таблицы счетов
+     */
+    public void deleteAccount(AccountManagement accountManagement){
+        try (final Connection connection = dataSource.getConnection()) {
+            final PreparedStatement statement = connection.prepareStatement("delete from account where (client_id, currency) values (?, ?)");
+            statement.setInt(1, (accountManagement.getClient_id()));
+            statement.setString(2, accountManagement.getCurrency());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Вносит деньги на счет
+     */
+    public void pushMoney(){
+        try (final Connection connection = dataSource.getConnection()) {
+            final PreparedStatement statement = connection.prepareStatement("UPDATE into account where 'client_id'= ");
+            statement.setInt(1, (accountManagement.getClient_id()));
+            statement.setString(2, accountManagement.getCurrency());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Снимает деньги со счета
+     */
+    public void pullMoney(){
+
+    }
 }
+

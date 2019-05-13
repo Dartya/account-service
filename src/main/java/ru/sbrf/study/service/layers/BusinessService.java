@@ -39,10 +39,10 @@ public class BusinessService {
      */
     public int registerAccount(TokenAccManager tokenAccManager) throws IOException {//(int clientId, BigDecimal summ, String currency){
 
-        long token = tokenAccManager.getToken();
+        String token = tokenAccManager.getToken();
 
         //отправляем запрос сервису авторизации - ВОЗМОЖНО НЕ ПРАВИЛЬНО
-        String url = "http://e.n1ks.ru:58080/authorization-service/getClientId/?token="+token;
+        String url = "http://e.n1ks.ru:58080/auth-service/getClientId?token="+token;
 
         URL obj = null;
         try {

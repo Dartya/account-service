@@ -8,6 +8,7 @@ import ru.sbrf.study.service.dto.TokenAccManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import java.io.IOException;
 
 @Service
 @Path("accservice")
@@ -22,6 +23,10 @@ public class AccountService {
     @Path("create")
     @Consumes(APPLICATION_JSON)
     public void create(TokenAccManager tokenAccManager){
-        businessService.registerAccount(tokenAccManager);
+        try {
+            businessService.registerAccount(tokenAccManager);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -7,15 +7,15 @@ import java.util.Objects;
  * DTO, содержащий поля для передачи его из сервиса в бизнес-логику
  */
 public class TokenAccManager {
-    private long token;
+    private String token;
     private BigDecimal summ;
     private String currency;
 
-    public long getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(long token) {
+    public void setToken(String token) {
         this.token = token;
     }
 
