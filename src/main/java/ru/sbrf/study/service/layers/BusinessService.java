@@ -2,14 +2,13 @@ package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.sbrf.study.service.dto.AccountManagement;
+import ru.sbrf.study.service.dto.AccountData;
 import ru.sbrf.study.service.dto.Record;
 import ru.sbrf.study.service.dto.TokenAccManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -77,11 +76,11 @@ public class BusinessService {
         int clientId = Integer.parseInt(response.toString());
 
         if (clientId != -1){
-            final AccountManagement accountManagement = new AccountManagement();
-            accountManagement.setClient_id(clientId);
-            accountManagement.setSumm(tokenAccManager.getSumm());
-            accountManagement.setCurrency(tokenAccManager.getCurrency());
-            dataAccess.createAccount(accountManagement);
+            final AccountData accountData = new AccountData();
+            accountData.setClient_id(clientId);
+            accountData.setSumm(tokenAccManager.getSumm());
+            accountData.setCurrency(tokenAccManager.getCurrency());
+            dataAccess.createAccount(accountData);
 
         } else{//else - возвращаем ошибку
             return -1;

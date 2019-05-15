@@ -2,7 +2,6 @@ package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.sbrf.study.service.dto.AccountManagement;
 import ru.sbrf.study.service.dto.TokenAccManager;
 
 import javax.ws.rs.Consumes;
