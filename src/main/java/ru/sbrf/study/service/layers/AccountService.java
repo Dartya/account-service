@@ -2,7 +2,8 @@ package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.sbrf.study.service.dto.TokenAccManager;
+import ru.sbrf.study.service.dto.AccountCreate;
+import ru.sbrf.study.service.dto.AccountDelete;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -21,11 +22,32 @@ public class AccountService {
     @POST
     @Path("create")
     @Consumes(APPLICATION_JSON)
-    public void create(TokenAccManager tokenAccManager){
+    public void createAccount(AccountCreate accountCreate){
         try {
-            businessService.registerAccount(tokenAccManager);
+            businessService.registerAccount(accountCreate);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @POST
+    @Path("delete")
+    @Consumes(APPLICATION_JSON)
+    public void deleteAccount(AccountDelete accountDelete){
+        //метод удаления счета
+    }
+
+    @POST
+    @Path("pull")
+    @Consumes(APPLICATION_JSON)
+    public void pullMoney(AccountDelete accountDelete){
+        //метод снятия денег со счета
+    }
+
+    @POST
+    @Path("push")
+    @Consumes(APPLICATION_JSON)
+    public void pushMoney(AccountDelete accountDelete){
+        //метод снятия денег со счета
     }
 }

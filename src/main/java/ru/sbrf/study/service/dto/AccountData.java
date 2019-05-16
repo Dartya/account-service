@@ -3,11 +3,10 @@ package ru.sbrf.study.service.dto;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-
 /**
- * Используется в при добавлении записей в таблицу history
+ * Используется в при добавлении записей в таблицы account, history
  */
-public class AccountFullData {
+public class AccountData {
 
     private int accountId;
     private int clientId;
@@ -15,10 +14,10 @@ public class AccountFullData {
     private int operation;
     private String currency;
 
-    public AccountFullData() {
+    public AccountData() {
     }
 
-    public AccountFullData(int accountId, int clientId, BigDecimal summ, int operation, String currency) {
+    public AccountData(int accountId, int clientId, BigDecimal summ, int operation, String currency) {
         this.accountId = accountId;
         this.clientId = clientId;
         this.summ = summ;
@@ -70,7 +69,7 @@ public class AccountFullData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AccountFullData that = (AccountFullData) o;
+        AccountData that = (AccountData) o;
         return accountId == that.accountId &&
                 clientId == that.clientId &&
                 operation == that.operation &&

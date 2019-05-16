@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * DTO, содержащий поля для передачи его из сервиса в бизнес-логику
+ * Используется для создания нового счета
  */
-public class TokenAccManager {
+public class AccountCreate {
     private String token;
     private BigDecimal summ;
     private String currency;
@@ -39,7 +39,7 @@ public class TokenAccManager {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TokenAccManager that = (TokenAccManager) o;
+        AccountCreate that = (AccountCreate) o;
         return token == that.token &&
                 Objects.equals(summ, that.summ) &&
                 Objects.equals(currency, that.currency);
