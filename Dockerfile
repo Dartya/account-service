@@ -6,4 +6,4 @@ COPY ./ /
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "sample-service.jar"]
+CMD ["java", "-jar", "service.jar"]
