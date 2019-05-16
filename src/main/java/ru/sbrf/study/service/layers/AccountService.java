@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sbrf.study.service.dto.AccountCreate;
 import ru.sbrf.study.service.dto.AccountDelete;
+import ru.sbrf.study.service.dto.PullPushMoney;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -23,31 +24,27 @@ public class AccountService {
     @Path("create")
     @Consumes(APPLICATION_JSON)
     public void createAccount(AccountCreate accountCreate){
-        try {
-            businessService.registerAccount(accountCreate);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        businessService.registerAccount(accountCreate);
     }
 
     @POST
     @Path("delete")
     @Consumes(APPLICATION_JSON)
     public void deleteAccount(AccountDelete accountDelete){
-        //метод удаления счета
+        businessService.deleteAccount(accountDelete);
     }
 
     @POST
     @Path("pull")
     @Consumes(APPLICATION_JSON)
-    public void pullMoney(AccountDelete accountDelete){
-        //метод снятия денег со счета
+    public void pullMoney(PullPushMoney pullPushMoney){
+        businessService.pullMoney(pullPushMoney);
     }
 
     @POST
     @Path("push")
     @Consumes(APPLICATION_JSON)
-    public void pushMoney(AccountDelete accountDelete){
-        //метод снятия денег со счета
+    public void pushMoney(PullPushMoney pullPushMoney){
+        businessService.pushMoney(pullPushMoney);
     }
 }

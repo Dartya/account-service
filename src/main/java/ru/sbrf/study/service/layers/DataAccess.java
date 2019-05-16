@@ -69,13 +69,11 @@ public class DataAccess implements InitializingBean {
     /**
      * Создает новую запись в таблице счетов (account)
      * Для создания записи необходимы: client_id, summ, currency - поля AccountData
-     * <p>
      * Создает новую запись в таблице истории операций (history)
-     * <p>
      * Нужно получить номер счета account_id, чтобы использовать AccountData
      * для внесения записи в таблицу истории операций
      *
-     * @param accountData dto
+     * @param accountData dto AccountData
      */
     public void createAccount(AccountData accountData) {
         try (final Connection connection = dataSource.getConnection()) {
@@ -84,6 +82,19 @@ public class DataAccess implements InitializingBean {
             statement.setBigDecimal(2, accountData.getSumm());
             statement.setString(3, accountData.getCurrency());
             statement.executeUpdate();
+
+            //транзакция
+            connection.setAutoCommit(false);
+            //новая запись в account
+            final PreparedStatement statementInsertAccount = connection.prepareStatement("insert into account (client_id, summ, currency) values (?, ?, ?)");
+            statementInsertAccount.setInt(1, (accountData.getClientId()));
+            statementInsertAccount.setBigDecimal(2, accountData.getSumm());
+            statementInsertAccount.setString(3, accountData.getCurrency());
+            Integer insertedRowId = statementInsertAccount.executeUpdate("insert into account (client_id, summ, currency) values (?, ?, ?)", Statement.RETURN_GENERATED_KEYS); //попробовать позже
+            //вернуть id вставленной строки
+            //.executeUpdate(query, statementInsertAccount.RETURN_GENERATED_KEYS);
+
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -91,9 +102,7 @@ public class DataAccess implements InitializingBean {
 
     /**
      * Удаляет запись из таблицы счетов (account)
-     * <p>
      * Для удаления нужен id счета - берем в AccountData
-     * <p>
      * Создает новую запись в таблице истории операций (history)
      */
     public void deleteAccount(AccountData accountData) {
@@ -108,7 +117,6 @@ public class DataAccess implements InitializingBean {
 
     /**
      * Вносит деньги на счет, использует AccountData - нужен id счета
-     * <p>
      * Создает новую запись в таблице истории операций (history)
      */
     public void pushMoney(AccountData accountData) {
@@ -124,8 +132,8 @@ public class DataAccess implements InitializingBean {
 
     /**
      * Снимает деньги со счета, использует AccountData - нужен id счета
-     * <p>
      * Создает новую запись в таблице истории операций (history)
+     * @param accountData
      */
     public void pullMoney(AccountData accountData) {
         try (final Connection connection = dataSource.getConnection()) {
@@ -139,7 +147,7 @@ public class DataAccess implements InitializingBean {
     }
 
     /**
-     * Создает новую запись в таблице
+     * Создает новую запись в таблице history
      */
     public void writeHistoryRow(AccountData accountData){
         try (final Connection connection = dataSource.getConnection()) {

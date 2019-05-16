@@ -6,16 +6,16 @@ import java.util.Objects;
 /**
  * Используется для создания нового счета
  */
-public class AccountCreate {
-    private String token;
+public class AccountCreate implements UsingToken {
+    private long token;
     private BigDecimal summ;
     private String currency;
 
-    public String getToken() {
+    public long getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(long token) {
         this.token = token;
     }
 
