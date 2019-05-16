@@ -6,8 +6,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sbrf.study.service.dto.AccountData;
-import ru.sbrf.study.service.dto.AccountFullData;
-import ru.sbrf.study.service.dto.ClientId;
 import ru.sbrf.study.service.dto.Record;
 
 import javax.sql.DataSource;
@@ -74,7 +72,7 @@ public class DataAccess implements InitializingBean {
      * <p>
      * Создает новую запись в таблице истории операций (history)
      * <p>
-     * Нужно получить номер счета account_id, чтобы использовать AccountFullData
+     * Нужно получить номер счета account_id, чтобы использовать AccountData
      * для внесения записи в таблицу истории операций
      *
      * @param accountData dto
@@ -82,7 +80,7 @@ public class DataAccess implements InitializingBean {
     public void createAccount(AccountData accountData) {
         try (final Connection connection = dataSource.getConnection()) {
             final PreparedStatement statement = connection.prepareStatement("insert into account (client_id, summ, currency) values (?, ?, ?)");
-            statement.setInt(1, (accountData.getClient_id()));
+            statement.setInt(1, (accountData.getClientId()));
             statement.setBigDecimal(2, accountData.getSumm());
             statement.setString(3, accountData.getCurrency());
             statement.executeUpdate();
@@ -94,14 +92,14 @@ public class DataAccess implements InitializingBean {
     /**
      * Удаляет запись из таблицы счетов (account)
      * <p>
-     * Для удаления нужен id счета - берем в AccountFullData
+     * Для удаления нужен id счета - берем в AccountData
      * <p>
      * Создает новую запись в таблице истории операций (history)
      */
-    public void deleteAccount(AccountFullData accountFullData) {
+    public void deleteAccount(AccountData accountData) {
         try (final Connection connection = dataSource.getConnection()) {
             final PreparedStatement statement = connection.prepareStatement("delete from account where account=?");
-            statement.setInt(1, (accountFullData.getAccountId()));
+            statement.setInt(1, (accountData.getAccountId()));
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -109,15 +107,15 @@ public class DataAccess implements InitializingBean {
     }
 
     /**
-     * Вносит деньги на счет, использует AccountFullData - нужен id счета
+     * Вносит деньги на счет, использует AccountData - нужен id счета
      * <p>
      * Создает новую запись в таблице истории операций (history)
      */
-    public void pushMoney(AccountFullData accountFullData) {
+    public void pushMoney(AccountData accountData) {
         try (final Connection connection = dataSource.getConnection()) {
             final PreparedStatement statement = connection.prepareStatement("UPDATE account SET summ=? WHERE id=?");
-            statement.setBigDecimal(1, accountFullData.getSumm());
-            statement.setInt(2, accountFullData.getAccountId());
+            statement.setBigDecimal(1, accountData.getSumm());
+            statement.setInt(2, accountData.getAccountId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -125,15 +123,15 @@ public class DataAccess implements InitializingBean {
     }
 
     /**
-     * Снимает деньги со счета, использует AccountFullData - нужен id счета
+     * Снимает деньги со счета, использует AccountData - нужен id счета
      * <p>
      * Создает новую запись в таблице истории операций (history)
      */
-    public void pullMoney(AccountFullData accountFullData) {
+    public void pullMoney(AccountData accountData) {
         try (final Connection connection = dataSource.getConnection()) {
             final PreparedStatement statement = connection.prepareStatement("UPDATE account SET summ = ? WHERE id=?");
-            statement.setBigDecimal(1, accountFullData.getSumm());
-            statement.setInt(2, accountFullData.getAccountId());
+            statement.setBigDecimal(1, accountData.getSumm());
+            statement.setInt(2, accountData.getAccountId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -143,13 +141,13 @@ public class DataAccess implements InitializingBean {
     /**
      * Создает новую запись в таблице
      */
-    public void writeHistoryRow(AccountFullData accountFullData){
+    public void writeHistoryRow(AccountData accountData){
         try (final Connection connection = dataSource.getConnection()) {
             final PreparedStatement statement = connection.prepareStatement("INSERT into history (client_id, account_id, operation_id, summ) values (?, ?, ?, ?)");
-            statement.setInt(1, (accountFullData.getClientId()));
-            statement.setInt(2, accountFullData.getAccountId());
-            statement.setInt(3, accountFullData.getOperation());
-            statement.setBigDecimal(4, accountFullData.getSumm());
+            statement.setInt(1, (accountData.getClientId()));
+            statement.setInt(2, accountData.getAccountId());
+            statement.setInt(3, accountData.getOperation());
+            statement.setBigDecimal(4, accountData.getSumm());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
