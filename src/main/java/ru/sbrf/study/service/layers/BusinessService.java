@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import ru.sbrf.study.service.dto.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -16,6 +17,7 @@ import java.util.function.Function;
 public class BusinessService {
 
     private static final String SERVICE_NAME = "auth";
+    private static final String CONFIG_SERVICE_NAME = "config";
     private static final int ERROR = -1;
 
     @Autowired
@@ -52,8 +54,7 @@ public class BusinessService {
         accountData.setClientId(clientId);
         accountData.setSumm(accountCreate.getSumm());
         accountData.setCurrency(accountCreate.getCurrency());
-        dataAccess.createAccount(accountData);
-        return 1;
+        return dataAccess.createAccount(accountData);
     }
 
     /**
@@ -69,8 +70,7 @@ public class BusinessService {
         final AccountData accountData = new AccountData();
         accountData.setAccountId(clientId);
         accountData.setAccountId(accountDelete.getAccountId());
-        dataAccess.deleteAccount(accountData);
-        return 1;
+        return dataAccess.deleteAccount(accountData);
     }
 
     /**
@@ -83,9 +83,11 @@ public class BusinessService {
         int clientId = validateToken(pullPushMoney);
         if (clientId == -1) return ERROR;
 
+        MaxSumm maxSumm = getMaxSummParam();
+        if (maxSumm.getMaxSumm().doubleValue() < pullPushMoney.getSumm().doubleValue()) return ERROR;
+
         final AccountData accountData = prepareData(pullPushMoney, clientId);
-        dataAccess.pullMoney(accountData);
-        return 1;
+        return dataAccess.pullMoney(accountData);
     }
 
     /**
@@ -99,8 +101,29 @@ public class BusinessService {
         if (clientId == -1) return ERROR;
 
         final AccountData accountData = prepareData(pullPushMoney, clientId);
-        dataAccess.pushMoney(accountData);
-        return 1;
+        return dataAccess.pushMoney(accountData);
+    }
+
+    /**
+     * Обращается к таблице history, делает выборку всех строк - истории операций
+     * @return заполеннный List
+     */
+    public List<History> getHistory(){
+        return dataAccess.getHistory();
+    }
+
+
+    /**
+     * Обращается к таблице history, делает выборку строк, относящихся к отдельному клиенту
+     * @param token
+     * @return
+     */
+    public List<History> getMyHistory(Token token){
+
+        int clientId = validateToken(token);
+        if (clientId == -1) return null;
+
+        return dataAccess.getHistoryByClientId(clientId);
     }
 
     /**
@@ -126,5 +149,13 @@ public class BusinessService {
         ClientId clientId =  restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "auth/getClientId", HttpMethod.GET, new HttpEntity<>(token), new ParameterizedTypeReference<ClientId>() {}).getBody();
         if (clientId.getClientId() == -1 || clientId == null || clientId.equals(null)) return ERROR;
         return clientId.getClientId();
+    }
+
+    /**
+     * Передает GET запрос сервису конфигурации, запрашивает параметр максимальной суммы расходной операции
+     * @return MaxSumm - максимальаня сумма расходной операции
+     */
+    private MaxSumm getMaxSummParam(){
+        return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "config/getMaxSumm", HttpMethod.GET, null, new ParameterizedTypeReference<MaxSumm>() {}).getBody();
     }
 }

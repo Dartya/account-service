@@ -2,14 +2,11 @@ package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.sbrf.study.service.dto.AccountCreate;
-import ru.sbrf.study.service.dto.AccountDelete;
-import ru.sbrf.study.service.dto.PullPushMoney;
+import ru.sbrf.study.service.dto.*;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @Path("accservice")
@@ -19,6 +16,12 @@ public class AccountService {
 
     @Autowired
     private BusinessService businessService;
+
+    @GET
+    @Path("hc")
+    public String healthCheck() {
+        return "OK";
+    }
 
     @POST
     @Path("create")
@@ -47,4 +50,16 @@ public class AccountService {
     public void pushMoney(PullPushMoney pullPushMoney){
         businessService.pushMoney(pullPushMoney);
     }
+
+    @GET
+    @Path("get-history")
+    @Produces(APPLICATION_JSON)
+    public List<History> getHistory() {
+        return businessService.getHistory();
+    }
+
+    @GET
+    @Path("get-my-history")
+    @Produces(APPLICATION_JSON)
+    public List<History> getMyHistory(Token token){ return businessService.getMyHistory(token);}
 }
