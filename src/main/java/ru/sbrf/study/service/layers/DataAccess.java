@@ -104,9 +104,10 @@ public class DataAccess implements InitializingBean {
             final History history = new History();
             history.setId(resultSet.getInt(1));
             history.setClientId(resultSet.getInt(2));
-            history.setOperationId(resultSet.getInt(3));
-            history.setSumm(resultSet.getBigDecimal(4));
-            history.setDateTime(resultSet.getTimestamp(5).toLocalDateTime());
+            history.setAccountId(resultSet.getInt(3));
+            history.setOperationId(resultSet.getInt(4));
+            history.setSumm(resultSet.getBigDecimal(5));
+            history.setDateTime(resultSet.getTimestamp(6).toLocalDateTime());
             records.add(history);
         }
         return records;
