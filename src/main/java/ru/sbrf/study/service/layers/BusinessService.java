@@ -1,15 +1,12 @@
 package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.sbrf.study.service.dto.*;
+import ru.sbrf.study.service.mocks.Mock;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 

@@ -1,4 +1,4 @@
-package ru.sbrf.study.service.dto;
+package ru.sbrf.study.service.mocks;
 
 import java.math.BigDecimal;
 
