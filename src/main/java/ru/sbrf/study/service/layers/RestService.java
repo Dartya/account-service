@@ -28,8 +28,8 @@ public class RestService {
     @POST
     @Path("create")
     @Consumes(APPLICATION_JSON)
-    public void createAccount(long token, BigDecimal summ, String currency){
-        AccountCreate accountCreate = new AccountCreate(token, summ, currency);
+    public void createAccount(long token, double summ, String currency){
+        AccountCreate accountCreate = new AccountCreate(token, new BigDecimal(summ), currency);
         businessService.registerAccount(accountCreate);
     }
 
@@ -44,16 +44,16 @@ public class RestService {
     @POST
     @Path("pull")
     @Consumes(APPLICATION_JSON)
-    public void pullMoney(long token, int accountId, BigDecimal summ){
-        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, summ);
+    public void pullMoney(long token, int accountId, double summ){
+        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, new BigDecimal(summ));
         businessService.pullMoney(pullPushMoney);
     }
 
     @POST
     @Path("push")
     @Consumes(APPLICATION_JSON)
-    public void pushMoney(long token, int accountId, BigDecimal summ){
-        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, summ);
+    public void pushMoney(long token, int accountId, double summ){
+        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, new BigDecimal(summ));
         businessService.pushMoney(pullPushMoney);
     }
 
