@@ -265,7 +265,7 @@ public class DataAccess implements InitializingBean {
 
                 if (accSumm.subtract(accountData.getSumm()).doubleValue() > 0.00) {
                     accSumm = accSumm.subtract(accountData.getSumm());
-                    System.out.println("Summ after increase = "+accSumm);
+                    System.out.println("Summ after decrease = "+accSumm);
 
                     //обновление записи в account - снятие денег со счета
                     final PreparedStatement statementUpdateAccount = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);

@@ -74,7 +74,7 @@ public class BusinessService {
     }
 
     /**
-     * Снимает деньги со счета
+     * Снимает деньги со счета, предварительно запрашивает сервис конфига параметр максимальной суммы расходной операции
      * @param pullPushMoney DTO, содержаний сумму операции и токен
      * @return код подтверждения операции "1" или код ошибки "-1"
      */
@@ -83,8 +83,11 @@ public class BusinessService {
         int clientId = validateToken(pullPushMoney);
         if (clientId == -1) return ERROR;
 
-        MaxSumm maxSumm = getMaxSummParam();
-        if (maxSumm.getMaxSumm().doubleValue() < pullPushMoney.getSumm().doubleValue()) return ERROR;
+        ConfigDTO configDTO = getMaxSummParam(); //maxSumm = 10000000
+        if (pullPushMoney.getSumm().doubleValue() > Double.parseDouble(configDTO.getValue())) {
+            System.out.println("Pull summ > maxSumm");
+            return ERROR;
+        }
 
         final AccountData accountData = prepareData(pullPushMoney, clientId);
         return dataAccess.pullMoney(accountData);
@@ -156,8 +159,9 @@ public class BusinessService {
      * Передает GET запрос сервису конфигурации, запрашивает параметр максимальной суммы расходной операции
      * @return MaxSumm - максимальаня сумма расходной операции
      */
-    private MaxSumm getMaxSummParam(){
-        //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/getMaxSumm", HttpMethod.GET, null, new ParameterizedTypeReference<MaxSumm>() {}).getBody();
-        return new MaxSumm(Mock.getMaxSumm());
+    private ConfigDTO getMaxSummParam(){
+        String request = "2";
+        return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(request), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
+        //return new MaxSumm(Mock.getMaxSumm());
     }
 }
