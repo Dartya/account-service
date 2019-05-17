@@ -14,9 +14,9 @@ public class AccountCreate implements UsingToken {
     public AccountCreate() {
     }
 
-    public AccountCreate(long token, BigDecimal summ, String currency) {
+    public AccountCreate(long token, double summ, String currency) {
         this.token = token;
-        this.summ = summ;
+        this.summ = new BigDecimal(summ);
         this.currency = currency;
     }
 

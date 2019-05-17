@@ -49,8 +49,8 @@ public class BusinessService {
 
         final AccountData accountData = new AccountData();
         accountData.setClientId(clientId);
-        accountData.setSumm(accountCreate.getSumm());
         accountData.setCurrency(accountCreate.getCurrency());
+        accountData.setSumm(accountCreate.getSumm());
         return dataAccess.createAccount(accountData);
     }
 

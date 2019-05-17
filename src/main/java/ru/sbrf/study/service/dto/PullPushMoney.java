@@ -16,10 +16,10 @@ public class PullPushMoney implements UsingToken {
     public PullPushMoney() {
     }
 
-    public PullPushMoney(int accountId, long token, BigDecimal summ) {
+    public PullPushMoney(int accountId, long token, double summ) {
         this.accountId = accountId;
         this.token = token;
-        this.summ = summ;
+        this.summ = this.summ = new BigDecimal(summ);;
     }
 
     public int getAccountId() {
