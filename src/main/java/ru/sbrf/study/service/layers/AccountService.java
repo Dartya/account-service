@@ -1,6 +1,7 @@
 package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.sbrf.study.service.dto.*;
 
@@ -8,7 +9,7 @@ import javax.ws.rs.*;
 import java.io.IOException;
 import java.util.List;
 
-@Service
+@Component
 @Path("accservice")
 public class AccountService {
 

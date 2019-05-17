@@ -145,10 +145,11 @@ public class BusinessService {
      * @param object объект, реализующий интерфейс UsingToken
      */
     private int validateToken(UsingToken object){
-        Token token = new Token(object.getToken());
-        ClientId clientId =  restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "auth/getClientId", HttpMethod.GET, new HttpEntity<>(token), new ParameterizedTypeReference<ClientId>() {}).getBody();
-        if (clientId.getClientId() == -1 || clientId == null || clientId.equals(null)) return ERROR;
-        return clientId.getClientId();
+        //Token token = new Token(object.getToken());
+        //ClientId clientId =  restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "auth/getClientId", HttpMethod.GET, new HttpEntity<>(token), new ParameterizedTypeReference<ClientId>() {}).getBody();
+        //if (clientId.getClientId() == -1 || clientId == null || clientId.equals(null)) return ERROR;
+        //return clientId.getClientId();
+        return Mock.getClientId();
     }
 
     /**
@@ -156,6 +157,7 @@ public class BusinessService {
      * @return MaxSumm - максимальаня сумма расходной операции
      */
     private MaxSumm getMaxSummParam(){
-        return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "config/getMaxSumm", HttpMethod.GET, null, new ParameterizedTypeReference<MaxSumm>() {}).getBody();
+        //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "config/getMaxSumm", HttpMethod.GET, null, new ParameterizedTypeReference<MaxSumm>() {}).getBody();
+        return new MaxSumm(Mock.getMaxSumm());
     }
 }
