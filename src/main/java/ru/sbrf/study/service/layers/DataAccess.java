@@ -65,7 +65,7 @@ public class DataAccess implements InitializingBean {
      */
     public List<History> getHistory(){
         try (final Connection connection = dataSource.getConnection()) {
-            final PreparedStatement statement = connection.prepareStatement("SELECT id, client_id, account_id, operation_id, summ, datetime FROM history");
+            final PreparedStatement statement = connection.prepareStatement("SELECT * FROM history");
             final ResultSet resultSet = statement.executeQuery();
 
             return makeHistoryList(resultSet);
@@ -137,7 +137,7 @@ public class DataAccess implements InitializingBean {
 
         Integer num;
         Integer result = -1;
-        final String query = "insert into account (client_id, summ, currency) values (?, ?, ?)";
+        final String query = "INSERT INTO account (client_id, summ, currency) VALUES (?, ?, ?)";
         try (final Connection connection = dataSource.getConnection()) {
             //начало транзакции
             connection.setAutoCommit(false);
@@ -172,7 +172,7 @@ public class DataAccess implements InitializingBean {
 
         Integer num;
         Integer result = -1;
-        final String query = "delete from account where account=?";
+        final String query = "DELETE FROM account WHERE id=?";
         try (final Connection connection = dataSource.getConnection()) {
             //начало транзакции
             connection.setAutoCommit(false);
@@ -298,19 +298,18 @@ public class DataAccess implements InitializingBean {
             ResultSet rs = preparedStatement.getGeneratedKeys();
             if (rs.next()) {
                 result = rs.getInt(1);
+                System.out.println("result of prev insert = "+result);
             }
 
             //новая запись в history
-            if (result > -1) {
-                final PreparedStatement statementInsertHistory = connection.prepareStatement("insert into history (client_id, account_id, operation_id, summ, datetime) values (?, ?, ?, ?, ?)");
-                statementInsertHistory.setInt(1, accountData.getClientId());
-                statementInsertHistory.setInt(2, accountId);
-                statementInsertHistory.setInt(3, operation);
-                statementInsertHistory.setBigDecimal(4, accountData.getSumm());
-                statementInsertHistory.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-                statementInsertHistory.executeUpdate();
-                result = 1;
-            }
+            final PreparedStatement statementInsertHistory = connection.prepareStatement("insert into history (client_id, account_id, operation_id, summ, datetime) values (?, ?, ?, ?, ?)");
+            statementInsertHistory.setInt(1, accountData.getClientId());
+            statementInsertHistory.setInt(2, accountId);
+            statementInsertHistory.setInt(3, operation);
+            statementInsertHistory.setBigDecimal(4, accountData.getSumm());
+            statementInsertHistory.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            result = statementInsertHistory.executeUpdate();
+            System.out.println(result+" row(s) inserted in history");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
