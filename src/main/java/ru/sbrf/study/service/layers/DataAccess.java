@@ -81,7 +81,7 @@ public class DataAccess implements InitializingBean {
      */
     public List<History> getHistoryByClientId(int clientId) {
         try (final Connection connection = dataSource.getConnection()) {
-            final PreparedStatement statement = connection.prepareStatement("SELECT id, client_id, account_id, operation_id, summ, datetime FROM history WHERE id=?");
+            final PreparedStatement statement = connection.prepareStatement("SELECT * FROM history WHERE client_id=?");
             statement.setInt(1, clientId);
             final ResultSet resultSet = statement.executeQuery();
 
@@ -215,10 +215,12 @@ public class DataAccess implements InitializingBean {
             final PreparedStatement statementSelectRow = connection.prepareStatement("SELECT summ FROM account WHERE id=?");
             statementSelectRow.setInt(1, accountData.getAccountId());
             final ResultSet resultSet = statementSelectRow.executeQuery();
+            System.out.println("account ID = "+accountData.getAccountId());
             if (resultSet.next()) {
                 accSumm = resultSet.getBigDecimal(1);
+                System.out.println("Summ before increase = "+accSumm);
                 accSumm = accSumm.add(accountData.getSumm());
-
+                System.out.println("Summ after increase = "+accSumm);
                 //обновление записи в account - внесение денег на счет
                 final PreparedStatement statementUpdateAccount = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                 statementUpdateAccount.setBigDecimal(1, accSumm);
@@ -258,6 +260,7 @@ public class DataAccess implements InitializingBean {
             //производим выборку из БД по указанному номеру счета, достаем сумму
             final PreparedStatement statementSelectRow = connection.prepareStatement("SELECT summ FROM account WHERE id=?");
             statementSelectRow.setInt(1, accountData.getAccountId());
+
             final ResultSet resultSet = statementSelectRow.executeQuery();
             if (resultSet.next()) {
                 accSumm = resultSet.getBigDecimal(1);

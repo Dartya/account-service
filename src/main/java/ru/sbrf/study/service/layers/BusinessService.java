@@ -65,7 +65,7 @@ public class BusinessService {
         if (clientId == -1) return ERROR;
 
         final AccountData accountData = new AccountData();
-        accountData.setAccountId(clientId);
+        accountData.setClientId(clientId);
         accountData.setAccountId(accountDelete.getAccountId());
         return dataAccess.deleteAccount(accountData);
     }
