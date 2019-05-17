@@ -136,7 +136,6 @@ public class DataAccess implements InitializingBean {
      */
     public int createAccount(AccountData accountData) {
 
-        Integer num;
         Integer result = -1;
         final String query = "INSERT INTO account (client_id, summ, currency) VALUES (?, ?, ?)";
         try (final Connection connection = dataSource.getConnection()) {
@@ -148,10 +147,10 @@ public class DataAccess implements InitializingBean {
             statementInsertAccount.setInt(1, accountData.getClientId());
             statementInsertAccount.setBigDecimal(2, accountData.getSumm());
             statementInsertAccount.setString(3, accountData.getCurrency());
-            num = statementInsertAccount.executeUpdate();
+            statementInsertAccount.executeUpdate();
 
             //получаем id вставленной строки, если id валидный (> 0), делаем запись в history
-            writeHistoryRow(accountData, statementInsertAccount, connection, 1, num);
+            result = writeHistoryRow(accountData, statementInsertAccount, connection, 1);
 
             //завершение транзакции
             connection.commit();
@@ -170,8 +169,6 @@ public class DataAccess implements InitializingBean {
      * @return результат операции: "1" - успешно, "-1" - ошибка
      */
     public int deleteAccount(AccountData accountData) {
-
-        Integer num;
         Integer result = -1;
         final String query = "DELETE FROM account WHERE id=?";
         try (final Connection connection = dataSource.getConnection()) {
@@ -181,10 +178,10 @@ public class DataAccess implements InitializingBean {
             //удаление записи в account
             final PreparedStatement statementDeleteAccount = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             statementDeleteAccount.setInt(1, (accountData.getAccountId()));
-            num = statementDeleteAccount.executeUpdate();
+            statementDeleteAccount.executeUpdate();
 
             //получаем id вставленной строки, если id валидный (> 0), делаем запись в history
-            result = writeHistoryRow(accountData, statementDeleteAccount, connection, 2, num);
+            result = writeHistoryRow(accountData, statementDeleteAccount, connection, 2);
 
             //завершение транзакции
             connection.commit();
@@ -203,7 +200,6 @@ public class DataAccess implements InitializingBean {
      */
     public int pushMoney(AccountData accountData) {
 
-        Integer num;
         Integer result = -1;
         BigDecimal accSumm;
         final String query = "UPDATE account SET summ=? WHERE id=?";
@@ -226,10 +222,10 @@ public class DataAccess implements InitializingBean {
                 final PreparedStatement statementUpdateAccount = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                 statementUpdateAccount.setBigDecimal(1, accSumm);
                 statementUpdateAccount.setInt(2, accountData.getAccountId());
-                num = statementUpdateAccount.executeUpdate();
+                statementUpdateAccount.executeUpdate();
 
                 //получаем id вставленной строки, если id валидный (> 0), делаем запись в history
-                result = writeHistoryRow(accountData, statementUpdateAccount, connection, 3, num);
+                result = writeHistoryRow(accountData, statementUpdateAccount, connection, 3);
             } else {
                 result = -2;
             }
@@ -250,7 +246,6 @@ public class DataAccess implements InitializingBean {
      * @return результат операции: "1" - успешно, "-1" - ошибка внесения записи в историю, "-2" не найдена строка с указанными параметрами
      */
     public int pullMoney(AccountData accountData) {
-        Integer num;
         Integer result = -1;
         BigDecimal accSumm;
         final String query = "UPDATE account SET summ=? WHERE id=?";
@@ -276,10 +271,10 @@ public class DataAccess implements InitializingBean {
                     final PreparedStatement statementUpdateAccount = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                     statementUpdateAccount.setBigDecimal(1, accSumm);
                     statementUpdateAccount.setInt(2, accountData.getAccountId());
-                    num = statementUpdateAccount.executeUpdate();
+                    statementUpdateAccount.executeUpdate();
 
                     //получаем id вставленной строки, если id валидный (> 0), делаем запись в history
-                    result = writeHistoryRow(accountData, statementUpdateAccount, connection, 4, num);
+                    result = writeHistoryRow(accountData, statementUpdateAccount, connection, 4);
                 } else{
                     System.out.println("Summ < 0");
                     result = -2;
@@ -298,26 +293,29 @@ public class DataAccess implements InitializingBean {
      * Создает новую запись в таблице history
      *
      * @param accountData
-     * @param accountId
      * @param connection
      * @param operation
      * @param preparedStatement
      * @return результат операции: "1" - успешно, "-1" - ошибка
      */
-    private int writeHistoryRow(AccountData accountData, PreparedStatement preparedStatement, Connection connection, int operation, int accountId){
+    private int writeHistoryRow(AccountData accountData, PreparedStatement preparedStatement, Connection connection, int operation){
         int result = -1;
         try {
             //получаем id вставленной строки
             ResultSet rs = preparedStatement.getGeneratedKeys();
             if (rs.next()) {
                 result = rs.getInt(1);
-                System.out.println("result of prev insert = "+result);
+                System.out.println("result of prev insert = "+result);  //в случае с createAccount result - id созданного счета
             }
 
             //новая запись в history
             final PreparedStatement statementInsertHistory = connection.prepareStatement("insert into history (client_id, account_id, operation_id, summ, datetime) values (?, ?, ?, ?, ?)");
             statementInsertHistory.setInt(1, accountData.getClientId());
-            statementInsertHistory.setInt(2, accountId);
+            if (operation == 1) {
+                statementInsertHistory.setInt(2, result);
+            } else{
+                statementInsertHistory.setInt(2, accountData.getAccountId());
+            }
             statementInsertHistory.setInt(3, operation);
             statementInsertHistory.setBigDecimal(4, accountData.getSumm());
             statementInsertHistory.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
