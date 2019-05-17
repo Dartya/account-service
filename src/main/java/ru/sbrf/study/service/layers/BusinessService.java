@@ -148,8 +148,8 @@ public class BusinessService {
      */
     private boolean validateToken(UsingToken object){
         //Token token = new Token(0, object.getToken());
-        return restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "/validateToken", HttpMethod.GET, new HttpEntity<>(object.getToken()), new ParameterizedTypeReference<Boolean>() {}).getBody();
-        //return Mock.getClientId();
+        //return restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "/validateToken", HttpMethod.GET, new HttpEntity<>(object.getToken()), new ParameterizedTypeReference<Boolean>() {}).getBody();
+        return Mock.isTokenValid();
     }
 
     /**
