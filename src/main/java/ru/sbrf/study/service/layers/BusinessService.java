@@ -1,6 +1,9 @@
 package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.sbrf.study.service.dto.*;
@@ -13,7 +16,7 @@ import java.util.function.Function;
 @Service
 public class BusinessService {
 
-    private static final String SERVICE_NAME = "auth";
+    private static final String SERVICE_NAME = "auth-service";
     private static final String CONFIG_SERVICE_NAME = "config";
     private static final int ERROR = -1;
 
@@ -143,7 +146,7 @@ public class BusinessService {
      */
     private int validateToken(UsingToken object){
         //Token token = new Token(object.getToken());
-        //ClientId clientId =  restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "auth/getClientId", HttpMethod.GET, new HttpEntity<>(token), new ParameterizedTypeReference<ClientId>() {}).getBody();
+        //ClientId clientId =  restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "/validateToken", HttpMethod.GET, new HttpEntity<>(token), new ParameterizedTypeReference<ClientId>() {}).getBody();
         //if (clientId.getClientId() == -1 || clientId == null || clientId.equals(null)) return ERROR;
         //return clientId.getClientId();
         return Mock.getClientId();
@@ -154,7 +157,7 @@ public class BusinessService {
      * @return MaxSumm - максимальаня сумма расходной операции
      */
     private MaxSumm getMaxSummParam(){
-        //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "config/getMaxSumm", HttpMethod.GET, null, new ParameterizedTypeReference<MaxSumm>() {}).getBody();
+        //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/getMaxSumm", HttpMethod.GET, null, new ParameterizedTypeReference<MaxSumm>() {}).getBody();
         return new MaxSumm(Mock.getMaxSumm());
     }
 }

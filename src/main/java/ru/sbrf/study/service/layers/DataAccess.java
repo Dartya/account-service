@@ -199,7 +199,7 @@ public class DataAccess implements InitializingBean {
      * Создает новую запись в таблице истории операций (history)
      *
      * @param accountData DTO
-     * @return результат операции: "1" - успешно, "-1" - ошибка
+     * @return результат операции: "1" - успешно, "-1" - ошибка внесения записи в историю, "-2" не найдена строка с указанными параметрами
      */
     public int pushMoney(AccountData accountData) {
 
@@ -214,6 +214,7 @@ public class DataAccess implements InitializingBean {
             //производим выборку из БД по указанному номеру счета, достаем сумму
             final PreparedStatement statementSelectRow = connection.prepareStatement("SELECT summ FROM account WHERE id=?");
             statementSelectRow.setInt(1, accountData.getAccountId());
+
             final ResultSet resultSet = statementSelectRow.executeQuery();
             System.out.println("account ID = "+accountData.getAccountId());
             if (resultSet.next()) {
@@ -246,7 +247,7 @@ public class DataAccess implements InitializingBean {
      * Создает новую запись в таблице истории операций (history)
      *
      * @param accountData DTO
-     * @return результат операции: "1" - успешно, "-1" - ошибка
+     * @return результат операции: "1" - успешно, "-1" - ошибка внесения записи в историю, "-2" не найдена строка с указанными параметрами
      */
     public int pullMoney(AccountData accountData) {
         Integer num;
@@ -262,11 +263,16 @@ public class DataAccess implements InitializingBean {
             statementSelectRow.setInt(1, accountData.getAccountId());
 
             final ResultSet resultSet = statementSelectRow.executeQuery();
+            System.out.println("account ID = "+accountData.getAccountId());
             if (resultSet.next()) {
                 accSumm = resultSet.getBigDecimal(1);
-                if (accSumm.subtract(accountData.getSumm()).doubleValue() > 0.00) {
+                System.out.println("Summ before decrease = "+accSumm);
 
-                    //обновление записи в account - внесение денег на счет
+                if (accSumm.subtract(accountData.getSumm()).doubleValue() > 0.00) {
+                    accSumm = accSumm.subtract(accountData.getSumm());
+                    System.out.println("Summ after increase = "+accSumm);
+
+                    //обновление записи в account - снятие денег со счета
                     final PreparedStatement statementUpdateAccount = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                     statementUpdateAccount.setBigDecimal(1, accSumm);
                     statementUpdateAccount.setInt(2, accountData.getAccountId());
@@ -274,6 +280,9 @@ public class DataAccess implements InitializingBean {
 
                     //получаем id вставленной строки, если id валидный (> 0), делаем запись в history
                     result = writeHistoryRow(accountData, statementUpdateAccount, connection, 4, num);
+                } else{
+                    System.out.println("Summ < 0");
+                    result = -2;
                 }
             }
 
