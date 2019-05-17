@@ -28,32 +28,28 @@ public class RestService {
     @POST
     @Path("create")
     @Consumes(APPLICATION_JSON)
-    public void createAccount(long token, double summ, String currency){
-        AccountCreate accountCreate = new AccountCreate(token, new BigDecimal(summ), currency);
+    public void createAccount(AccountCreate accountCreate){
         businessService.registerAccount(accountCreate);
     }
 
     @POST
     @Path("delete")
     @Consumes(APPLICATION_JSON)
-    public void deleteAccount(long token, int accountId){
-        AccountDelete accountDelete = new AccountDelete(accountId, token);
+    public void deleteAccount(AccountDelete accountDelete){
         businessService.deleteAccount(accountDelete);
     }
 
     @POST
     @Path("pull")
     @Consumes(APPLICATION_JSON)
-    public void pullMoney(long token, int accountId, double summ){
-        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, new BigDecimal(summ));
+    public void pullMoney(PullPushMoney pullPushMoney){
         businessService.pullMoney(pullPushMoney);
     }
 
     @POST
     @Path("push")
     @Consumes(APPLICATION_JSON)
-    public void pushMoney(long token, int accountId, double summ){
-        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, new BigDecimal(summ));
+    public void pushMoney(PullPushMoney pullPushMoney){
         businessService.pushMoney(pullPushMoney);
     }
 
@@ -67,5 +63,5 @@ public class RestService {
     @GET
     @Path("get-my-history")
     @Produces(APPLICATION_JSON)
-    public List<History> getMyHistory(long token){ return businessService.getMyHistory(new Token(token));}
+    public List<History> getMyHistory(Token token){ return businessService.getMyHistory(token);}
 }
