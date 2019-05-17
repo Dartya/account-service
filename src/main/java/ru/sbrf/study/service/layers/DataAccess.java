@@ -306,26 +306,24 @@ public class DataAccess implements InitializingBean {
             if (rs.next()) {
                 result = rs.getInt(1);
                 System.out.println("result of prev insert = " + result);  //в случае с createAccount result - id созданного счета
-
-
-                //новая запись в history
-                final PreparedStatement statementInsertHistory = connection.prepareStatement("insert into history (client_id, account_id, operation_id, summ, datetime) values (?, ?, ?, ?, ?)");
-                statementInsertHistory.setInt(1, accountData.getClientId());
-                if (operation == 1) {
-                    System.out.println("create method, accountId = " + result);
-                    statementInsertHistory.setInt(2, result);
-                } else {
-                    System.out.println("not create method, accountId = " + accountData.getAccountId());
-                    statementInsertHistory.setInt(2, accountData.getAccountId());
-                }
-                statementInsertHistory.setInt(3, operation);
-                statementInsertHistory.setBigDecimal(4, accountData.getSumm());
-                statementInsertHistory.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-                result = statementInsertHistory.executeUpdate();
-                System.out.println(result + " row(s) inserted in history");
-            }else{
-                System.out.println("0 rows inserted");
             }
+
+            //новая запись в history
+            final PreparedStatement statementInsertHistory = connection.prepareStatement("insert into history (client_id, account_id, operation_id, summ, datetime) values (?, ?, ?, ?, ?)");
+            statementInsertHistory.setInt(1, accountData.getClientId());
+            if (operation == 1) {
+                System.out.println("create method, accountId = " + result);
+                statementInsertHistory.setInt(2, result);
+            } else {
+                System.out.println("not create method, accountId = " + accountData.getAccountId());
+                statementInsertHistory.setInt(2, accountData.getAccountId());
+            }
+            statementInsertHistory.setInt(3, operation);
+            statementInsertHistory.setBigDecimal(4, accountData.getSumm());
+            statementInsertHistory.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            result = statementInsertHistory.executeUpdate();
+            System.out.println(result + " row(s) inserted in history");
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
