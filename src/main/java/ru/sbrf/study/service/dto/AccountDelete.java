@@ -9,6 +9,14 @@ public class AccountDelete implements UsingToken {
     private int accountId;
     private long token;
 
+    public AccountDelete() {
+    }
+
+    public AccountDelete(int accountId, long token) {
+        this.accountId = accountId;
+        this.token = token;
+    }
+
     public int getAccountId() {
         return accountId;
     }
@@ -23,14 +31,6 @@ public class AccountDelete implements UsingToken {
     }
 
     public void setToken(long token) {
-        this.token = token;
-    }
-
-    public AccountDelete() {
-    }
-
-    public AccountDelete(int accountId, long token) {
-        this.accountId = accountId;
         this.token = token;
     }
 

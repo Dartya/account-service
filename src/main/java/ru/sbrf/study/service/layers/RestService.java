@@ -7,6 +7,7 @@ import ru.sbrf.study.service.dto.*;
 
 import javax.ws.rs.*;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -27,28 +28,32 @@ public class RestService {
     @POST
     @Path("create")
     @Consumes(APPLICATION_JSON)
-    public void createAccount(AccountCreate accountCreate){
+    public void createAccount(long token, BigDecimal summ, String currency){
+        AccountCreate accountCreate = new AccountCreate(token, summ, currency);
         businessService.registerAccount(accountCreate);
     }
 
     @POST
     @Path("delete")
     @Consumes(APPLICATION_JSON)
-    public void deleteAccount(AccountDelete accountDelete){
+    public void deleteAccount(long token, int accountId){
+        AccountDelete accountDelete = new AccountDelete(accountId, token);
         businessService.deleteAccount(accountDelete);
     }
 
     @POST
     @Path("pull")
     @Consumes(APPLICATION_JSON)
-    public void pullMoney(PullPushMoney pullPushMoney){
+    public void pullMoney(long token, int accountId, BigDecimal summ){
+        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, summ);
         businessService.pullMoney(pullPushMoney);
     }
 
     @POST
     @Path("push")
     @Consumes(APPLICATION_JSON)
-    public void pushMoney(PullPushMoney pullPushMoney){
+    public void pushMoney(long token, int accountId, BigDecimal summ){
+        PullPushMoney pullPushMoney = new PullPushMoney(accountId, token, summ);
         businessService.pushMoney(pullPushMoney);
     }
 
@@ -62,5 +67,5 @@ public class RestService {
     @GET
     @Path("get-my-history")
     @Produces(APPLICATION_JSON)
-    public List<History> getMyHistory(Token token){ return businessService.getMyHistory(token);}
+    public List<History> getMyHistory(long token){ return businessService.getMyHistory(new Token(token));}
 }
