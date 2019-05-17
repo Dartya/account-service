@@ -308,6 +308,7 @@ public class DataAccess implements InitializingBean {
                 statementInsertHistory.setInt(3, operation);
                 statementInsertHistory.setBigDecimal(4, accountData.getSumm());
                 statementInsertHistory.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+                statementInsertHistory.executeUpdate();
                 result = 1;
             }
         } catch (SQLException e) {
