@@ -7,24 +7,34 @@ import java.util.Objects;
  * Используется для создания нового счета
  */
 public class AccountCreate implements UsingToken {
-    private long token;
+    private int clientId;
+    private String token;
     private BigDecimal summ;
     private String currency;
 
     public AccountCreate() {
     }
 
-    public AccountCreate(long token, double summ, String currency) {
+    public AccountCreate(int clientId, String token, double summ, String currency) {
+        this.clientId = clientId;
         this.token = token;
         this.summ = new BigDecimal(summ);
         this.currency = currency;
     }
 
-    public long getToken() {
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getToken() {
         return token;
     }
 
-    public void setToken(long token) {
+    public void setToken(String token) {
         this.token = token;
     }
 

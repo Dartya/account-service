@@ -6,15 +6,25 @@ import java.util.Objects;
  * Используется при удалении счета
  */
 public class AccountDelete implements UsingToken {
+    private int clientId;
     private int accountId;
-    private long token;
+    private String token;
 
     public AccountDelete() {
     }
 
-    public AccountDelete(int accountId, long token) {
+    public AccountDelete(int clientId, int accountId, String token) {
+        this.clientId = clientId;
         this.accountId = accountId;
         this.token = token;
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
     public int getAccountId() {
@@ -26,11 +36,11 @@ public class AccountDelete implements UsingToken {
     }
 
     @Override
-    public long getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(long token) {
+    public void setToken(String token) {
         this.token = token;
     }
 

@@ -3,21 +3,31 @@ package ru.sbrf.study.service.dto;
 import java.util.Objects;
 
 public class Token implements UsingToken{
-    private long token;
+    private int clientId;
+    private String token;
 
     public Token() {
     }
 
-    public Token(long token) {
+    public Token(int clientId, String token) {
+        this.clientId = clientId;
         this.token = token;
     }
 
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
+
     @Override
-    public long getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(long token) {
+    public void setToken(String token) {
         this.token = token;
     }
 

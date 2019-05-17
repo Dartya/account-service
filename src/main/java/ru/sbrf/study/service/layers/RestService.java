@@ -28,29 +28,33 @@ public class RestService {
     @POST
     @Path("create")
     @Consumes(APPLICATION_JSON)
-    public void createAccount(AccountCreate accountCreate){
-        businessService.registerAccount(accountCreate);
+    @Produces(APPLICATION_JSON)
+    public int createAccount(AccountCreate accountCreate){
+        return businessService.registerAccount(accountCreate);
     }
 
     @POST
     @Path("delete")
     @Consumes(APPLICATION_JSON)
-    public void deleteAccount(AccountDelete accountDelete){
-        businessService.deleteAccount(accountDelete);
+    @Produces(APPLICATION_JSON)
+    public int deleteAccount(AccountDelete accountDelete){
+        return businessService.deleteAccount(accountDelete);
     }
 
     @POST
     @Path("pull")
     @Consumes(APPLICATION_JSON)
-    public void pullMoney(PullPushMoney pullPushMoney){
-        businessService.pullMoney(pullPushMoney);
+    @Produces(APPLICATION_JSON)
+    public int pullMoney(PullPushMoney pullPushMoney){
+        return businessService.pullMoney(pullPushMoney);
     }
 
     @POST
     @Path("push")
     @Consumes(APPLICATION_JSON)
-    public void pushMoney(PullPushMoney pullPushMoney){
-        businessService.pushMoney(pullPushMoney);
+    @Produces(APPLICATION_JSON)
+    public int pushMoney(PullPushMoney pullPushMoney){
+        return businessService.pushMoney(pullPushMoney);
     }
 
     @GET

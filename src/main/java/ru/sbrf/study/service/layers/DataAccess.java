@@ -6,6 +6,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sbrf.study.service.dto.AccountData;
+import ru.sbrf.study.service.dto.ClientId;
 import ru.sbrf.study.service.dto.History;
 import ru.sbrf.study.service.dto.Record;
 

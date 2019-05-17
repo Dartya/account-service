@@ -47,11 +47,11 @@ public class BusinessService {
      */
     public int registerAccount(AccountCreate accountCreate){
 
-        int clientId = validateToken(accountCreate);
-        if (clientId == -1) return ERROR;
+        boolean isTokenValid = validateToken(accountCreate);
+        if (!isTokenValid) return ERROR;
 
         final AccountData accountData = new AccountData();
-        accountData.setClientId(clientId);
+        accountData.setClientId(accountCreate.getClientId());
         accountData.setCurrency(accountCreate.getCurrency());
         accountData.setSumm(accountCreate.getSumm());
         return dataAccess.createAccount(accountData);
@@ -64,11 +64,11 @@ public class BusinessService {
      */
     public int deleteAccount(AccountDelete accountDelete){
 
-        int clientId = validateToken(accountDelete);
-        if (clientId == -1) return ERROR;
+        boolean isTokenValid = validateToken(accountDelete);
+        if (!isTokenValid) return ERROR;
 
         final AccountData accountData = new AccountData();
-        accountData.setClientId(clientId);
+        accountData.setClientId(accountDelete.getClientId());
         accountData.setAccountId(accountDelete.getAccountId());
         return dataAccess.deleteAccount(accountData);
     }
@@ -80,8 +80,8 @@ public class BusinessService {
      */
     public int pullMoney(PullPushMoney pullPushMoney){
 
-        int clientId = validateToken(pullPushMoney);
-        if (clientId == -1) return ERROR;
+        boolean isTokenValid = validateToken(pullPushMoney);
+        if (!isTokenValid) return ERROR;
 
         ConfigDTO configDTO = getMaxSummParam(); //maxSumm = 10000000
         if (pullPushMoney.getSumm().doubleValue() > Double.parseDouble(configDTO.getValue())) {
@@ -89,7 +89,7 @@ public class BusinessService {
             return ERROR;
         }
 
-        final AccountData accountData = prepareData(pullPushMoney, clientId);
+        final AccountData accountData = prepareData(pullPushMoney);
         return dataAccess.pullMoney(accountData);
     }
 
@@ -100,10 +100,10 @@ public class BusinessService {
      */
     public int pushMoney(PullPushMoney pullPushMoney){
 
-        int clientId = validateToken(pullPushMoney);
-        if (clientId == -1) return ERROR;
+        boolean isTokenValid = validateToken(pullPushMoney);
+        if (!isTokenValid) return ERROR;
 
-        final AccountData accountData = prepareData(pullPushMoney, clientId);
+        final AccountData accountData = prepareData(pullPushMoney);
         return dataAccess.pushMoney(accountData);
     }
 
@@ -123,21 +123,20 @@ public class BusinessService {
      */
     public List<History> getMyHistory(Token token){
 
-        int clientId = validateToken(token);
-        if (clientId == -1) return null;
+        boolean isTokenValid = validateToken(token);
+        if (!isTokenValid) return null;
 
-        return dataAccess.getHistoryByClientId(clientId);
+        return dataAccess.getHistoryByClientId(token.getClientId());
     }
 
     /**
      * Подготавливает AccountData, содержит повторяющийся код
      * @param pullPushMoney DTO, содержаний сумму операции и токен
-     * @param clientId id клиента
      * @return заполненный AccountData
      */
-    private AccountData prepareData(PullPushMoney pullPushMoney, int clientId){
+    private AccountData prepareData(PullPushMoney pullPushMoney){
         final AccountData accountData = new AccountData();
-        accountData.setClientId(clientId);
+        accountData.setClientId(pullPushMoney.getClientid());
         accountData.setSumm(pullPushMoney.getSumm());
         accountData.setAccountId(pullPushMoney.getAccountId());
         return accountData;
@@ -147,12 +146,10 @@ public class BusinessService {
      * Передает Token на проверку сервису авторизации, получает ClientId, содержащий либо id клиента, либо ошибку - значение "-1"
      * @param object объект, реализующий интерфейс UsingToken
      */
-    private int validateToken(UsingToken object){
-        //Token token = new Token(object.getToken());
-        //ClientId clientId =  restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "/validateToken", HttpMethod.GET, new HttpEntity<>(token), new ParameterizedTypeReference<ClientId>() {}).getBody();
-        //if (clientId.getClientId() == -1 || clientId == null || clientId.equals(null)) return ERROR;
-        //return clientId.getClientId();
-        return Mock.getClientId();
+    private boolean validateToken(UsingToken object){
+        //Token token = new Token(0, object.getToken());
+        return restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "/validateToken", HttpMethod.GET, new HttpEntity<>(object.getToken()), new ParameterizedTypeReference<Boolean>() {}).getBody();
+        //return Mock.getClientId();
     }
 
     /**
@@ -160,7 +157,7 @@ public class BusinessService {
      * @return MaxSumm - максимальаня сумма расходной операции
      */
     private ConfigDTO getMaxSummParam(){
-        String request = "2";
+        String request = "maxSum";
         return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(request), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         //return new MaxSumm(Mock.getMaxSumm());
     }
