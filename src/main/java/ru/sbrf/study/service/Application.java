@@ -15,6 +15,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import ru.sbrf.study.service.layers.AccountService;
 import ru.sbrf.study.service.layers.RestService;
 
 import javax.annotation.PostConstruct;
@@ -75,7 +76,7 @@ public class Application {
 	public static class JerseyConfig extends ResourceConfig {
 
 		public JerseyConfig() {
-			register(RestService.class);
+			register(AccountService.class);
 			register(new LoggingFeature(Logger.getLogger("http-endpoints"), Level.INFO, LoggingFeature.Verbosity.PAYLOAD_TEXT, null));
 		}
 	}
