@@ -157,8 +157,9 @@ public class BusinessService {
      * @return MaxSumm - максимальаня сумма расходной операции
      */
     private ConfigDTO getMaxSummParam(){
-        String request = "maxSum";
-        return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(request), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
+        KeyDTO keyDTO = new KeyDTO();
+        keyDTO.setKey("maxSum");
+        return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         //return new MaxSumm(Mock.getMaxSumm());
     }
 }

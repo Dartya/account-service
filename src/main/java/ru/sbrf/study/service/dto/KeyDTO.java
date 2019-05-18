@@ -2,9 +2,8 @@ package ru.sbrf.study.service.dto;
 
 import java.util.Objects;
 
-public class ConfigDTO {
+public class KeyDTO {
     private String key;
-    private String value;
 
     public String getKey() {
         return key;
@@ -14,26 +13,16 @@ public class ConfigDTO {
         this.key = key;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ConfigDTO configDTO = (ConfigDTO) o;
-        return Objects.equals(key, configDTO.key) &&
-                Objects.equals(value, configDTO.value);
+        KeyDTO keyDTO = (KeyDTO) o;
+        return Objects.equals(key, keyDTO.key);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, value);
+        return Objects.hash(key);
     }
-
 }
