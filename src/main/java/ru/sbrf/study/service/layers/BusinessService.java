@@ -154,7 +154,7 @@ public class BusinessService {
 
     /**
      * Передает GET запрос сервису конфигурации, запрашивает параметр максимальной суммы расходной операции
-     * @return MaxSumm - максимальаня сумма расходной операции
+     * @return ConfigDTO с параметром - максимальной суммаой расходной операции
      */
     private ConfigDTO getMaxSummParam(){
         KeyDTO keyDTO = new KeyDTO();
