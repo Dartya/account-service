@@ -154,16 +154,15 @@ public class BusinessService {
 
     /**
      * Передает GET запрос сервису конфигурации, запрашивает параметр максимальной суммы расходной операции
-     * @return ConfigDTO с параметром - максимальной суммаой расходной операции
+     * @return ConfigDTO с параметром - максимальной суммой расходной операции
      */
     private ConfigDTO getMaxSummParam(){
         KeyDTO keyDTO = new KeyDTO();
         keyDTO.setKey("maxSum");
 
-        ConfigDTO configDTO = restTemplate.exchange("http://e.n1ks.ru:32808/config/get", HttpMethod.POST, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
+        ConfigDTO configDTO = restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.POST, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         return configDTO;
-
-        //return new MaxSumm(Mock.getMaxSumm());
+        //return new MaxSumm(Mock.getMaxSumm()); //http://e.n1ks.ru:32808/config/get
     }
 }
