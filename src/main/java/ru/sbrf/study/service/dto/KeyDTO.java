@@ -1,8 +1,9 @@
 package ru.sbrf.study.service.dto;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class KeyDTO {
+public class KeyDTO implements Serializable {
     private String key;
 
     public String getKey() {

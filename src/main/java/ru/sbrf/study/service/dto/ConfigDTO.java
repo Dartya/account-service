@@ -1,8 +1,9 @@
 package ru.sbrf.study.service.dto;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ConfigDTO {
+public class ConfigDTO implements Serializable {
     private String key;
     private String value;
 
