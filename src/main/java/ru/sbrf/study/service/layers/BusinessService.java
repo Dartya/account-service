@@ -159,8 +159,11 @@ public class BusinessService {
     private ConfigDTO getMaxSummParam(){
         KeyDTO keyDTO = new KeyDTO();
         keyDTO.setKey("maxSum");
+
+        ConfigDTO configDTO = restTemplate.exchange("http://e.n1ks.ru:32808/config/get", HttpMethod.POST, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
-        return restTemplate.exchange("http://e.n1ks.ru:32802/config/get", HttpMethod.GET, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
+        return configDTO;
+
         //return new MaxSumm(Mock.getMaxSumm());
     }
 }
