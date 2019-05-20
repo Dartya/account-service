@@ -1,21 +1,31 @@
-package ru.sbrf.study.service.dto;
+package ru.sbrf.study.service.entities;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class History {
+@Entity
+@Table(name = "history")
+public class HistoryEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "client_id")
     private int clientId;
+    @Column(name = "account_id")
     private int accountId;
+    @Column(name = "operation_id")
     private int operationId;
     private BigDecimal summ;
+    @Column(name = "datetime")
     private LocalDateTime dateTime;
 
-    public History() {
+    public HistoryEntity() {
     }
 
-    public History(int id, int clientId, int accountId, int operationId, BigDecimal summ, LocalDateTime dateTime) {
+    public HistoryEntity(int id, int clientId, int accountId, int operationId, BigDecimal summ, LocalDateTime dateTime) {
         this.id = id;
         this.clientId = clientId;
         this.accountId = accountId;
@@ -76,13 +86,13 @@ public class History {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        History history = (History) o;
-        return id == history.id &&
-                clientId == history.clientId &&
-                accountId == history.accountId &&
-                operationId == history.operationId &&
-                Objects.equals(summ, history.summ) &&
-                Objects.equals(dateTime, history.dateTime);
+        HistoryEntity historyEntity = (HistoryEntity) o;
+        return id == historyEntity.id &&
+                clientId == historyEntity.clientId &&
+                accountId == historyEntity.accountId &&
+                operationId == historyEntity.operationId &&
+                Objects.equals(summ, historyEntity.summ) &&
+                Objects.equals(dateTime, historyEntity.dateTime);
     }
 
     @Override

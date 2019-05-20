@@ -9,6 +9,7 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvi
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -34,6 +35,13 @@ public class Application {
 	private static final String ENV_DB_USERNAME = "db.username";
 	private static final String ENV_DB_PASSWORD = "db.password";
 
+	@Value("${db.url}")
+	private String dbUrl;
+	@Value("${db.username}")
+	private String dbUsername;
+	@Value("${db.password}")
+	private String dbPassword;
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -43,9 +51,15 @@ public class Application {
 		return DataSourceBuilder
 				.create()
 				.type(MysqlDataSource.class)
+				/* данные для подключения к СУБД, не используя Hibernate
 				.url(env.get(ENV_DB_URL))
 				.username(env.get(ENV_DB_USERNAME))
 				.password(env.get(ENV_DB_PASSWORD))
+				*/
+				//данные для подключения к СУБД, используя Hibernate - берутся из application.property
+				.url(dbUrl)
+				.username(dbUsername)
+				.password(dbPassword)
 				.build();
 	}
 
@@ -69,6 +83,7 @@ public class Application {
 		objectMapper.registerModule(new JavaTimeModule());
 		objectMapper.registerModule(new Jdk8Module());
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 	}
 
 	@Configuration

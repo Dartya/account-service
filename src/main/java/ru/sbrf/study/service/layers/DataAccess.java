@@ -6,14 +6,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sbrf.study.service.dto.AccountData;
-import ru.sbrf.study.service.dto.ClientId;
-import ru.sbrf.study.service.dto.History;
+import ru.sbrf.study.service.entities.HistoryEntity;
 import ru.sbrf.study.service.dto.Record;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +27,17 @@ public class DataAccess implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         connectionCheck();
+    }
+
+    private void connectionCheck() {
+        try (final Connection connection = dataSource.getConnection()) {
+            if (connection.prepareStatement("select null").executeQuery().next())
+                logger.info("db connection checked successfully");
+            else
+                throw new RuntimeException("db connection error");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createRecord(Record record) {
@@ -62,9 +71,9 @@ public class DataAccess implements InitializingBean {
 
     /**
      * Обращется к таблице history, делает выборку всех строк
-     * @return возвращает все строки таблицы в виде листа объектов History
+     * @return возвращает все строки таблицы в виде листа объектов HistoryEntity
      */
-    public List<History> getHistory(){
+    public List<HistoryEntity> getHistory(){
         try (final Connection connection = dataSource.getConnection()) {
             final PreparedStatement statement = connection.prepareStatement("SELECT * FROM history");
             final ResultSet resultSet = statement.executeQuery();
@@ -78,9 +87,9 @@ public class DataAccess implements InitializingBean {
     /**
      * Обращется к таблице history, делает выборку строк, относящихся к clientId
      * @param clientId id обратившегося и подтвердившего валидность клиента
-     * @return возвращает строки таблицы в виде листа объектов History
+     * @return возвращает строки таблицы в виде листа объектов HistoryEntity
      */
-    public List<History> getHistoryByClientId(int clientId) {
+    public List<HistoryEntity> getHistoryByClientId(int clientId) {
         try (final Connection connection = dataSource.getConnection()) {
             final PreparedStatement statement = connection.prepareStatement("SELECT * FROM history WHERE client_id=?");
             statement.setInt(1, clientId);
@@ -93,36 +102,25 @@ public class DataAccess implements InitializingBean {
     }
 
     /**
-     * Генерирует List<History>, содержит повторяющийся код методов getHistory() и getHistoryByClientId()
+     * Генерирует List<HistoryEntity>, содержит повторяющийся код методов getHistory() и getHistoryByClientId()
      *
      * @param resultSet множество строк-ответа СУБД
      * @return возвращет лист со строками таблицы, относящихся к обратившемуся клиенту
      * @throws SQLException
      */
-    private List<History> makeHistoryList(ResultSet resultSet) throws SQLException{
-        final List<History> records = new ArrayList<>();
+    private List<HistoryEntity> makeHistoryList(ResultSet resultSet) throws SQLException{
+        final List<HistoryEntity> records = new ArrayList<>();
         while (resultSet.next()) {
-            final History history = new History();
-            history.setId(resultSet.getInt(1));
-            history.setClientId(resultSet.getInt(2));
-            history.setAccountId(resultSet.getInt(3));
-            history.setOperationId(resultSet.getInt(4));
-            history.setSumm(resultSet.getBigDecimal(5));
-            history.setDateTime(resultSet.getTimestamp(6).toLocalDateTime());
-            records.add(history);
+            final HistoryEntity historyEntity = new HistoryEntity();
+            historyEntity.setId(resultSet.getInt(1));
+            historyEntity.setClientId(resultSet.getInt(2));
+            historyEntity.setAccountId(resultSet.getInt(3));
+            historyEntity.setOperationId(resultSet.getInt(4));
+            historyEntity.setSumm(resultSet.getBigDecimal(5));
+            historyEntity.setDateTime(resultSet.getTimestamp(6).toLocalDateTime());
+            records.add(historyEntity);
         }
         return records;
-    }
-
-    private void connectionCheck() {
-        try (final Connection connection = dataSource.getConnection()) {
-            if (connection.prepareStatement("select null").executeQuery().next())
-                logger.info("db connection checked successfully");
-            else
-                throw new RuntimeException("db connection error");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.sbrf.study.service.dto.*;
+import ru.sbrf.study.service.entities.HistoryEntity;
 import ru.sbrf.study.service.mocks.Mock;
 
 import java.time.LocalDateTime;
@@ -111,7 +112,7 @@ public class BusinessService {
      * Обращается к таблице history, делает выборку всех строк - истории операций
      * @return заполеннный List
      */
-    public List<History> getHistory(){
+    public List<HistoryEntity> getHistory(){
         return dataAccess.getHistory();
     }
 
@@ -121,7 +122,7 @@ public class BusinessService {
      * @param token
      * @return
      */
-    public List<History> getMyHistory(Token token){
+    public List<HistoryEntity> getMyHistory(Token token){
 
         boolean isTokenValid = validateToken(token);
         if (!isTokenValid) return null;
@@ -160,7 +161,7 @@ public class BusinessService {
         KeyDTO keyDTO = new KeyDTO();
         keyDTO.setKey("maxSum");
 
-        ConfigDTO configDTO = restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.POST, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
+        ConfigDTO configDTO = restTemplate.exchange("http://e.n1ks.ru:32808/config/get", HttpMethod.POST, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         return configDTO;
         //return new MaxSumm(Mock.getMaxSumm()); //http://e.n1ks.ru:32808/config/get

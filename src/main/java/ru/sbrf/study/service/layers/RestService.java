@@ -1,13 +1,15 @@
 package ru.sbrf.study.service.layers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import ru.sbrf.study.service.dto.*;
+import ru.sbrf.study.service.entities.HistoryEntity;
+import ru.sbrf.study.service.service.AccountService;
+import ru.sbrf.study.service.service.HistoryRepository;
+import ru.sbrf.study.service.service.HistoryService;
 
 import javax.ws.rs.*;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -18,6 +20,15 @@ public class RestService {
 
     @Autowired
     private BusinessService businessService;
+
+    @Autowired
+    private HistoryRepository historyRepository;
+
+    @Autowired
+    private HistoryService historyService;
+
+    @Autowired
+    private AccountService accountService;
 
     @GET
     @Path("hc")
@@ -60,12 +71,26 @@ public class RestService {
     @GET
     @Path("get-history")
     @Produces(APPLICATION_JSON)
-    public List<History> getHistory() {
+    public List<HistoryEntity> getHistory() {
         return businessService.getHistory();
     }
 
     @GET
     @Path("get-my-history")
     @Produces(APPLICATION_JSON)
-    public List<History> getMyHistory(Token token){ return businessService.getMyHistory(token);}
+    public List<HistoryEntity> getMyHistory(Token token){ return businessService.getMyHistory(token);}
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Path("getAll")
+    public List<HistoryEntity> getAll() {
+        return historyRepository.getAll();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Path("addAcc")
+    public void addAcc(AccountCreate accountCreate){
+        accountService.addAccount(accountCreate);
+    }
 }
