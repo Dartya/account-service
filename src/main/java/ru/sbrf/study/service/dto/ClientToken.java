@@ -2,15 +2,24 @@ package ru.sbrf.study.service.dto;
 
 import java.util.Objects;
 
-public class Token implements UsingToken {
-
+public class ClientToken implements UsingToken{
+    private int clientId;
     private String token;
 
-    public Token() {
+    public ClientToken() {
     }
 
-    public Token(String token) {
+    public ClientToken(int clientId, String token) {
+        this.clientId = clientId;
         this.token = token;
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
     @Override
@@ -26,8 +35,8 @@ public class Token implements UsingToken {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Token token1 = (Token) o;
-        return Objects.equals(token, token1.token);
+        ClientToken clientToken1 = (ClientToken) o;
+        return token == clientToken1.token;
     }
 
     @Override

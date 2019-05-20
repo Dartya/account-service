@@ -7,7 +7,6 @@ import ru.sbrf.study.service.dto.*;
 import ru.sbrf.study.service.entities.HistoryEntity;
 import ru.sbrf.study.service.service.AccountService;
 import ru.sbrf.study.service.service.HistoryRepository;
-import ru.sbrf.study.service.service.HistoryService;
 
 import javax.ws.rs.*;
 import java.util.List;
@@ -23,9 +22,6 @@ public class RestService {
 
     @Autowired
     private HistoryRepository historyRepository;
-
-    @Autowired
-    private HistoryService historyService;
 
     @Autowired
     private AccountService accountService;
@@ -78,7 +74,7 @@ public class RestService {
     @GET
     @Path("get-my-history")
     @Produces(APPLICATION_JSON)
-    public List<HistoryEntity> getMyHistory(Token token){ return businessService.getMyHistory(token);}
+    public List<HistoryEntity> getMyHistory(ClientToken clientToken){ return businessService.getMyHistory(clientToken);}
 
     @GET
     @Produces(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -89,8 +85,12 @@ public class RestService {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Produces(MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Path("addAcc")
-    public void addAcc(AccountCreate accountCreate){
-        accountService.addAccount(accountCreate);
+    public int addAcc(AccountCreate accountCreate){
+        boolean isTokenValid = businessService.validateToken(accountCreate);
+        if (!isTokenValid) return -1;
+
+        return accountService.addAccount(accountCreate);
     }
 }

@@ -16,27 +16,33 @@ import java.time.LocalDateTime;
 @Slf4j
 public class AccountService {
 
+    private static final int ERROR = -1;
+
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Transactional
-    public void addAccount(AccountCreate accountCreate){
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setClientId(accountCreate.getClientId());
-        accountEntity.setSumm(accountCreate.getSumm());
-        accountEntity.setCurrency(accountCreate.getCurrency());
-        entityManager.persist(accountEntity);
-        int newAccountId = accountEntity.getId();
+    public int addAccount(AccountCreate accountCreate){
+        try {
+            AccountEntity accountEntity = new AccountEntity();
+            accountEntity.setClientId(accountCreate.getClientId());
+            accountEntity.setSumm(accountCreate.getSumm());
+            accountEntity.setCurrency(accountCreate.getCurrency());
+            entityManager.persist(accountEntity);
+            int newAccountId = accountEntity.getId();
 
-        final HistoryEntity historyEntity = new HistoryEntity();
-        historyEntity.setAccountId(newAccountId);
-        historyEntity.setClientId(accountEntity.getClientId());
-        historyEntity.setOperationId(1);
-        historyEntity.setDateTime(LocalDateTime.now());
-        historyEntity.setSumm(accountEntity.getSumm());
-        entityManager.persist(historyEntity);
+            final HistoryEntity historyEntity = new HistoryEntity();
+            historyEntity.setAccountId(newAccountId);
+            historyEntity.setClientId(accountEntity.getClientId());
+            historyEntity.setOperationId(1);
+            historyEntity.setDateTime(LocalDateTime.now());
+            historyEntity.setSumm(accountEntity.getSumm());
+            entityManager.persist(historyEntity);
+
+            return 1;
+        }catch (Exception exc){
+            exc.printStackTrace();
+            return ERROR;
+        }
     }
 }

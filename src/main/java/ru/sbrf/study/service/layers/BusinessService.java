@@ -9,7 +9,9 @@ import org.springframework.web.client.RestTemplate;
 import ru.sbrf.study.service.dto.*;
 import ru.sbrf.study.service.entities.HistoryEntity;
 import ru.sbrf.study.service.mocks.Mock;
+import ru.sbrf.study.service.service.AccountService;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
@@ -119,15 +121,15 @@ public class BusinessService {
 
     /**
      * Обращается к таблице history, делает выборку строк, относящихся к отдельному клиенту
-     * @param token
+     * @param clientToken
      * @return
      */
-    public List<HistoryEntity> getMyHistory(Token token){
+    public List<HistoryEntity> getMyHistory(ClientToken clientToken){
 
-        boolean isTokenValid = validateToken(token);
+        boolean isTokenValid = validateToken(clientToken);
         if (!isTokenValid) return null;
 
-        return dataAccess.getHistoryByClientId(token.getClientId());
+        return dataAccess.getHistoryByClientId(clientToken.getClientId());
     }
 
     /**
@@ -144,13 +146,13 @@ public class BusinessService {
     }
 
     /**
-     * Передает Token на проверку сервису авторизации, получает ClientId, содержащий либо id клиента, либо ошибку - значение "-1"
+     * Передает ClientToken на проверку сервису авторизации, получает ClientId, содержащий либо id клиента, либо ошибку - значение "-1"
      * @param object объект, реализующий интерфейс UsingToken
      */
-    private boolean validateToken(UsingToken object){
-        //Token token = new Token(0, object.getToken());
-        //return restTemplate.exchange(serviceLocator.apply(SERVICE_NAME) + "/validateToken", HttpMethod.GET, new HttpEntity<>(object.getToken()), new ParameterizedTypeReference<Boolean>() {}).getBody();
-        return Mock.isTokenValid();
+    public boolean validateToken(UsingToken object){
+        Token token = new Token(object.getToken());
+        return restTemplate.exchange("http://e.n1ks.ru:32811/auth-service/validateToken", HttpMethod.POST, new HttpEntity<>(token), new ParameterizedTypeReference<Boolean>() {}).getBody();
+        //return Mock.isTokenValid();
     }
 
     /**
@@ -162,8 +164,7 @@ public class BusinessService {
         keyDTO.setKey("maxSum");
 
         ConfigDTO configDTO = restTemplate.exchange("http://e.n1ks.ru:32808/config/get", HttpMethod.POST, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
-        //return restTemplate.exchange(serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get", HttpMethod.GET, new HttpEntity<>(keyDTO), new ParameterizedTypeReference<ConfigDTO>() {}).getBody();
         return configDTO;
-        //return new MaxSumm(Mock.getMaxSumm()); //http://e.n1ks.ru:32808/config/get
+        //return new MaxSumm(Mock.getMaxSumm()); //serviceLocator.apply(CONFIG_SERVICE_NAME) + "/get
     }
 }
