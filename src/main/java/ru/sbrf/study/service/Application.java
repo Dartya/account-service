@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mysql.cj.jdbc.MysqlDataSource;
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -29,6 +32,7 @@ import java.util.logging.Logger;
 
 @SpringBootApplication
 @Configuration
+@EnableEurekaClient
 public class Application {
 
 	private static final String ENV_DB_URL = "db.url";
@@ -44,6 +48,9 @@ public class Application {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@Autowired
+	private EurekaClient eurekaClient;
 
 	@Bean
 	public DataSource dataSource() {
@@ -75,7 +82,17 @@ public class Application {
 
 	@Bean
 	public Function<String, String> serviceUrlProvider() {
-		return serviceName -> System.getenv().get(serviceName + ".url");
+		return serviceName -> {
+			final com.netflix.discovery.shared.Application application = eurekaClient.getApplication(serviceName);
+			if (application == null)
+				throw new RuntimeException("service by name " + serviceName + " not found");
+			if (application.getInstances().isEmpty())
+				throw new RuntimeException("service by name " + serviceName + " has no instance");
+			final InstanceInfo instanceInfo = application.getInstances().get(0);
+			final String hostName = instanceInfo.getHostName();
+			final int port = instanceInfo.getPort();
+			return "http://" + hostName + ":" + port + "/";
+		};
 	}
 
 	@PostConstruct
